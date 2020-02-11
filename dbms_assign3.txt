@@ -1,0 +1,297 @@
+SQL> create table emp(empno number(5) primary key,ename varchar(10),mgr number(4
+),hiredate date,sal number,comm number,dept varchar(20),check (empno>=7000 and e
+mpno<=8000),check (comm<=1500));
+
+Table created.
+
+SQL> insert into emp values(7001,'jinku',7005,TO_DATE('01-02-2004','DD-MM-
+> YYYY'),100000,0,'csg');
+
+1 row created.
+
+SQL> insert into emp values(7002,'akshay',7008,TO_DATE('01-02-2005','DD-MM-
+> YYYY'),300000,40,'esg');
+
+1 row created.
+
+SQL> insert into emp values(7004,'ritu',7005,TO_DATE('02-02-2007','DD-MM-YYYY'),
+500000,0,'msg');
+
+1 row created.
+
+SQL> insert into emp values(7003,'hytr',7006,TO_DATE('02-05-2007','DD-MM-YYYY'),
+800000,45,'bsg');
+
+1 row created.
+
+SQL> insert into emp values(7005,'guju',7006,TO_DATE('02-07-2007','DD-MM-YYYY'),
+900000,1005,'csg');
+
+1 row created.
+
+SQL> insert into emp values(7006,'gyana',7007,TO_DATE('02-07-2008','DD-MM-YYYY')
+,1900000,10,'csg');
+
+1 row created.
+
+SQL> insert into emp values(7007,'rana',7009,TO_DATE('04-07-2009','DD-MM-YYYY'),
+3000000,0,'esg');
+
+1 row created.
+
+SQL> insert into emp values(7008,'ting',7006,TO_DATE('04-07-2012','DD-MM-YYYY'),
+3100000,300,'bsg');
+
+1 row created.
+
+SQL> insert into emp values(7009,'kaka',7009,TO_DATE('04-08-2016','DD-MM-YYYY'),
+110000,0,'bsg');
+
+1 row created.
+
+SQL> insert into emp values(7010,'ryta',7005,TO_DATE('04-07-2018','DD-MM-YYYY'),
+120000,0,'dsg');
+
+1 row created.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> select * from emp;
+
+     EMPNO ENAME             MGR HIREDATE         SAL       COMM
+---------- ---------- ---------- --------- ---------- ----------
+DEPT
+--------------------
+      7001 jinku            7005 01-FEB-04     100000          0
+csg
+
+      7002 akshay           7008 01-FEB-05     300000         40
+esg
+
+      7004 ritu             7005 02-FEB-07     500000          0
+msg
+
+
+     EMPNO ENAME             MGR HIREDATE         SAL       COMM
+---------- ---------- ---------- --------- ---------- ----------
+DEPT
+--------------------
+      7003 hytr             7006 02-MAY-07     800000         45
+bsg
+
+      7005 guju             7006 02-JUL-07     900000       1005
+csg
+
+      7006 gyana            7007 02-JUL-08    1900000         10
+csg
+
+
+     EMPNO ENAME             MGR HIREDATE         SAL       COMM
+---------- ---------- ---------- --------- ---------- ----------
+DEPT
+--------------------
+      7007 rana             7009 04-JUL-09    3000000          0
+esg
+
+      7008 ting             7006 04-JUL-12    3100000        300
+bsg
+
+      7009 kaka             7009 04-AUG-16     110000          0
+bsg
+
+
+     EMPNO ENAME             MGR HIREDATE         SAL       COMM
+---------- ---------- ---------- --------- ---------- ----------
+DEPT
+--------------------
+      7010 ryta             7005 04-JUL-18     120000          0
+dsg
+
+
+10 rows selected.
+
+SQL> select ename from emp where ename like "%i%";
+select ename from emp where ename like "%i%"
+                                       *
+ERROR at line 1:
+ORA-00904: "%i%": invalid identifier
+
+
+SQL> select ename from emp where ename like "%i";
+select ename from emp where ename like "%i"
+                                       *
+ERROR at line 1:
+ORA-00904: "%i": invalid identifier
+
+
+SQL> select ename from emp where ename like '%i%';
+
+ENAME
+----------
+jinku
+ritu
+ting
+
+SQL> select ename from emp where empno not in (select mgr from emp);
+
+ENAME
+----------
+ritu
+akshay
+ryta
+hytr
+jinku
+
+SQL> select count(ename) from emp where empno not in (select mgr from emp);
+
+COUNT(ENAME)
+------------
+           5
+
+SQL> select max(sal) as highest,min(sal) as lowest,sum(sal) as sum,avg(sal) as a
+verage from emp;
+
+   HIGHEST     LOWEST        SUM    AVERAGE
+---------- ---------- ---------- ----------
+   3100000     100000   10830000    1083000
+
+SQL> select max(sal) as highest,min(sal) as lowest,sum(sal) as sum,avg(sal) as a
+verage from emp group by dept;
+
+   HIGHEST     LOWEST        SUM    AVERAGE
+---------- ---------- ---------- ----------
+    500000     500000     500000     500000
+    120000     120000     120000     120000
+   3000000     300000    3300000    1650000
+   3100000     110000    4010000 1336666.67
+   1900000     100000    2900000 966666.667
+
+SQL> select dept,max(sal) as highest,min(sal) as lowest,sum(sal) as sum,avg(sal)
+ as average from emp group by dept;
+
+DEPT                    HIGHEST     LOWEST        SUM    AVERAGE
+-------------------- ---------- ---------- ---------- ----------
+msg                      500000     500000     500000     500000
+dsg                      120000     120000     120000     120000
+esg                     3000000     300000    3300000    1650000
+bsg                     3100000     110000    4010000 1336666.67
+csg                     1900000     100000    2900000 966666.667
+
+SQL> select count(*) from emp group by mgr;
+
+  COUNT(*)
+----------
+         2
+         3
+         1
+         3
+         1
+
+SQL> select sum(select distinct count(*) from emp group by mgr) as number of man
+agers from emp;
+select sum(select distinct count(*) from emp group by mgr) as number of managers
+ from emp
+           *
+ERROR at line 1:
+ORA-00936: missing expression
+
+
+SQL> select sum(select distinct count(*) from emp group by mgr) as number_of_man
+agers from emp;
+select sum(select distinct count(*) from emp group by mgr) as number_of_managers
+ from emp
+           *
+ERROR at line 1:
+ORA-00936: missing expression
+
+
+SQL> select ename from emp where hiredate>TO_DATE('01-01-1980','DD-MM-YYYY');
+
+ENAME
+----------
+jinku
+akshay
+ritu
+hytr
+guju
+gyana
+rana
+ting
+kaka
+ryta
+
+10 rows selected.
+
+SQL> select max(select sal from where dept='csg') from emp;
+select max(select sal from where dept='csg') from emp
+           *
+ERROR at line 1:
+ORA-00936: missing expression
+
+
+SQL> select max(sal) from emp having dept='csg';
+select max(sal) from emp having dept='csg'
+                                *
+ERROR at line 1:
+ORA-00979: not a GROUP BY expression
+
+
+SQL> select max(sal) from emp  group by dept having dept='csg';
+
+  MAX(SAL)
+----------
+   1900000
+
+SQL> select min(sal) from emp  group by dept having dept='csg';
+
+  MIN(SAL)
+----------
+    100000
+
+SQL> select ename from emp where hiredate>TO_DATE('01-01-2011','DD-MM-YYYY');
+
+ENAME
+----------
+ting
+kaka
+ryta
+
+SQL> select ename from emp where sal>(select sal from emp where ename='ritu');
+
+ENAME
+----------
+hytr
+guju
+gyana
+rana
+ting
+
+SQL> select ename from emp where dept='csg';
+
+ENAME
+----------
+jinku
+guju
+gyana
+
+SQL> select dept from emp where ename='gyana';
+
+DEPT
+--------------------
+csg
+
+SQL> select dept from emp where sal=(select max(sal) from emp group by dept);
+select dept from emp where sal=(select max(sal) from emp group by dept)
+                                *
+ERROR at line 1:
+ORA-01427: single-row subquery returns more than one row
+
+
+SQL> select dept from emp where sal=(select max(sal) from emp where dept=emp.dep
+t);
+
+DEPT
+--------------------
+bsg
